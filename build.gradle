@@ -1,0 +1,58 @@
+buildscript {
+    dependencies {
+        classpath files(mkdir('build/classes/java/main'))
+    }
+}
+
+plugins {
+    id 'org.roboscratch.robot' version '0.1.1'
+}
+
+apply plugin: 'java'
+apply plugin: 'jacoco'
+
+sourceCompatibility = 1.7
+version = '1.0'
+
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'Hello World', 
+                   'Implementation-Version': archiveVersion, 
+                   'Main-Class': 'edu.jsu.mcis.HelloWorld'
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testCompile 'junit:junit:4+'
+}
+
+jacocoTestReport {
+    group = 'Reporting'
+    description = 'Generate Jacoco coverage reports after running tests.'
+    additionalSourceDirs(files(sourceSets.main.allJava.srcDirs))
+}
+
+test {
+    systemProperties 'property': 'value'
+}
+
+uploadArchives {
+    repositories {
+       flatDir {
+           dirs 'repos'
+       }
+    }
+}
+
+if(hasProperty("Xlint:unchecked")) {
+    tasks.withType(JavaCompile) { 
+        options.compilerArgs << "-Xlint:unchecked" 
+    }
+}
+
+runrobot.debugfile = 'debug.log'
+runrobot.dependsOn build
